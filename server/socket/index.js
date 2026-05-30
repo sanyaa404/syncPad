@@ -57,6 +57,16 @@ module.exports = (io) => {
       socket.to(roomId).emit('typing', { username });
     });
 
+    // --- CURSOR MOVE ---
+    socket.on('cursor-move', ({ roomId, line, column }) => {
+      socket.to(roomId).emit('cursor-move', {
+        userId: socket.userId,
+        username: socket.username,
+        line,
+        column
+      });
+    });
+
     // --- SAVE CODE (persist to MongoDB) ---
     socket.on('save-code', async ({ roomId, code }) => {
       try {
