@@ -32,6 +32,9 @@ const Room = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [showUserPanel, setShowUserPanel] = useState(false);
+  const [output, setOutput] = useState(null);
+  const [running, setRunning] = useState(false);
+  const [showOutput, setShowOutput] = useState(false);
 
   const socketRef = useRef(null);
   const editorRef = useRef(null);
@@ -176,6 +179,26 @@ const Room = () => {
     socketRef.current?.emit('language-change', { roomId, language: newLanguage });
   };
 
+  const handleRunCode = async () => {
+    setRunning(true);
+    setShowOutput(true);
+    setOutput(null);
+
+    try {
+      const res = await api.execute.run({ code, language });
+      setOutput(res.data);
+    } catch (err) {
+      setOutput({
+        stderr: 'Execution service unavailable. Try again.',
+        stdout: '',
+        compile_output: '',
+        status: 'Error'
+      });
+    } finally {
+      setRunning(false);
+    }
+  };
+
   // Format typing indicator text
   const getTypingText = () => {
     const users = [...typingUsers];
@@ -226,6 +249,21 @@ const Room = () => {
                 <option key={lang} value={lang}>{lang}</option>
               ))}
             </select>
+
+            <button
+              onClick={handleRunCode}
+              disabled={running}
+              className="flex items-center gap-1.5 bg-green-600 hover:bg-green-500 disabled:opacity-50 disabled:cursor-not-allowed text-white text-xs font-medium px-3 py-1.5 rounded transition"
+            >
+              {running ? (
+                <>
+                  <span className="animate-spin">⟳</span>
+                  Running...
+                </>
+              ) : (
+                <>▶ Run</>
+              )}
+            </button>
           </div>
 
           {/* Right */}
@@ -267,67 +305,138 @@ const Room = () => {
       {/* Main area */}
       <div className="flex-1 flex overflow-hidden">
 
-        {/* Editor */}
-        <div className="flex-1 overflow-hidden">
-          {loading ? (
-            <div className="flex items-center justify-center h-full">
-              <div className="text-gray-400 text-sm">Loading editor...</div>
+        {/* Editor + Output stacked */}
+        <div className="flex-1 flex flex-col overflow-hidden">
+
+            {/* Editor */}
+            <div className={`${showOutput ? 'h-3/5' : 'flex-1'} overflow-hidden`}>
+            {loading ? (
+                <div className="flex items-center justify-center h-full">
+                <div className="text-gray-400 text-sm">Loading editor...</div>
+                </div>
+            ) : (
+                <Editor
+                height="100%"
+                language={language === 'cpp' ? 'cpp' : language}
+                value={code}
+                onChange={handleEditorChange}
+                onMount={handleEditorMount}
+                theme="vs-dark"
+                options={{
+                    fontSize: 14,
+                    minimap: { enabled: false },
+                    scrollBeyondLastLine: false,
+                    wordWrap: 'on',
+                    padding: { top: 16 },
+                    fontFamily: 'JetBrains Mono, Fira Code, monospace',
+                }}
+                />
+            )}
             </div>
-          ) : (
-            <Editor
-              height="100%"
-              language={language === 'cpp' ? 'cpp' : language}
-              value={code}
-              onChange={handleEditorChange}
-              onMount={handleEditorMount}
-              theme="vs-dark"
-              options={{
-                fontSize: 14,
-                minimap: { enabled: false },
-                scrollBeyondLastLine: false,
-                wordWrap: 'on',
-                padding: { top: 16 },
-                fontFamily: 'JetBrains Mono, Fira Code, monospace',
-              }}
-            />
-          )}
+
+            {/* Output Panel */}
+            {showOutput && (
+            <div className="h-2/5 bg-gray-950 border-t border-gray-700 flex flex-col">
+                <div className="flex items-center justify-between px-4 py-2 border-b border-gray-700 flex-shrink-0">
+                <div className="flex items-center gap-3">
+                    <span className="text-white text-xs font-medium">Output</span>
+                    {output?.status && (
+                    <span className={`text-xs px-2 py-0.5 rounded font-medium ${
+                        output.status === 'Accepted'
+                        ? 'bg-green-500/20 text-green-400'
+                        : 'bg-red-500/20 text-red-400'
+                    }`}>
+                        {output.status}
+                    </span>
+                    )}
+                    {output?.time && (
+                    <span className="text-gray-500 text-xs">{output.time}s</span>
+                    )}
+                </div>
+                <button
+                    onClick={() => setShowOutput(false)}
+                    className="text-gray-500 hover:text-white text-xs"
+                >
+                    ✕
+                </button>
+                </div>
+
+                <div className="flex-1 overflow-y-auto p-4 font-mono text-sm">
+                {running ? (
+                    <div className="text-gray-400 text-xs">Running code...</div>
+                ) : output ? (
+                    <>
+                    {output.compile_output && (
+                        <div className="mb-3">
+                        <div className="text-yellow-400 text-xs mb-1">Compilation Error</div>
+                        <pre className="text-yellow-300 text-xs whitespace-pre-wrap">
+                            {output.compile_output}
+                        </pre>
+                        </div>
+                    )}
+                    {output.stderr && (
+                        <div className="mb-3">
+                        <div className="text-red-400 text-xs mb-1">Error</div>
+                        <pre className="text-red-300 text-xs whitespace-pre-wrap">
+                            {output.stderr}
+                        </pre>
+                        </div>
+                    )}
+                    {output.stdout && (
+                        <div>
+                        <div className="text-green-400 text-xs mb-1">Output</div>
+                        <pre className="text-gray-200 text-xs whitespace-pre-wrap">
+                            {output.stdout}
+                        </pre>
+                        </div>
+                    )}
+                    {!output.stdout && !output.stderr && !output.compile_output && (
+                        <div className="text-gray-500 text-xs">
+                        No output
+                        </div>
+                    )}
+                    </>
+                ) : null}
+                </div>
+            </div>
+            )}
         </div>
 
-        {/* User Panel — slides in from right */}
+        {/* User Panel */}
         {showUserPanel && (
-          <div className="w-56 bg-gray-800 border-l border-gray-700 flex flex-col flex-shrink-0">
+            <div className="w-56 bg-gray-800 border-l border-gray-700 flex flex-col flex-shrink-0">
             <div className="px-4 py-3 border-b border-gray-700 flex items-center justify-between">
-              <span className="text-white text-xs font-medium">
+                <span className="text-white text-xs font-medium">
                 In this room ({connectedUsers.length})
-              </span>
-              <button
+                </span>
+                <button
                 onClick={() => setShowUserPanel(false)}
                 className="text-gray-500 hover:text-white text-xs"
-              >
+                >
                 ✕
-              </button>
+                </button>
             </div>
             <div className="flex-1 overflow-y-auto p-3 space-y-2">
-              {connectedUsers.map((u) => (
+                {connectedUsers.map((u) => (
                 <div key={u.socketId} className="flex items-center gap-2">
-                  <div
+                    <div
                     className="w-7 h-7 rounded-full flex items-center justify-center text-white text-xs font-bold flex-shrink-0"
                     style={{ backgroundColor: getUserColor(u.username) }}
-                  >
+                    >
                     {u.username[0].toUpperCase()}
-                  </div>
-                  <span className="text-gray-300 text-sm truncate">
+                    </div>
+                    <span className="text-gray-300 text-sm truncate">
                     {u.username}
-                  </span>
-                  {u.userId === user?.id && (
+                    </span>
+                    {u.userId === user?._id && (
                     <span className="text-gray-500 text-xs ml-auto">you</span>
-                  )}
+                    )}
                 </div>
-              ))}
+                ))}
             </div>
-          </div>
+            </div>
         )}
-      </div>
+        </div>
     </div>
   );
 };

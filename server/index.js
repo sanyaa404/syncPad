@@ -28,6 +28,7 @@ app.get('/api/health', (req, res) => {
 
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/rooms', require('./routes/rooms'));
+app.use('/api/execute', require('./routes/execute'));
 
 require('./socket/index')(io);
 

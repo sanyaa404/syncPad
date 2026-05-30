@@ -36,5 +36,8 @@ export const api = {
     join: (roomId) => axiosInstance.post(`/rooms/join/${roomId}`),
     getRoom: (roomId) => axiosInstance.get(`/rooms/${roomId}`),
     getMyRooms: () => axiosInstance.get('/rooms'),
-  }
+  },
+  execute: {
+    run: (data) => axiosInstance.post('/execute', data),
+  },
 };
