@@ -11,20 +11,31 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="bg-gray-900 border-b border-gray-700 px-6 py-4">
+    <nav style={{ background: '#242424', borderBottom: '1px solid #333' }} className="px-6 py-3">
       <div className="max-w-6xl mx-auto flex items-center justify-between">
         <span
-          className="text-white text-xl font-bold cursor-pointer"
           onClick={() => navigate('/dashboard')}
+          className="cursor-pointer font-bold text-lg tracking-tight"
+          style={{ color: '#BE5103' }}
         >
           Syncpad
         </span>
         {user && (
           <div className="flex items-center gap-4">
-            <span className="text-gray-400 text-sm">{user.username}</span>
+            <span style={{ color: '#888', fontSize: '13px' }}>{user.username}</span>
             <button
               onClick={handleLogout}
-              className="text-sm bg-gray-700 hover:bg-gray-600 text-white px-3 py-1.5 rounded transition"
+              style={{
+                background: 'transparent',
+                border: '1px solid #333',
+                color: '#888',
+                fontSize: '12px',
+                padding: '4px 12px',
+                borderRadius: '6px',
+                cursor: 'pointer'
+              }}
+              onMouseEnter={e => e.target.style.borderColor = '#BE5103'}
+              onMouseLeave={e => e.target.style.borderColor = '#333'}
             >
               Logout
             </button>

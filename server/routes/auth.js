@@ -43,7 +43,7 @@ router.post('/register', [
       { expiresIn: '7d' }
     );
 
-    res.status(201).json({ token, user: { id: user._id, username: user.username, email: user.email } });
+    res.status(201).json({ token, user: { _id: user._id, username: user.username, email: user.email } });
 
   } catch (error) {
     console.error(error);
@@ -80,7 +80,7 @@ router.post('/login', [
       { expiresIn: '7d' }
     );
 
-    res.json({ token, user: { id: user._id, username: user.username, email: user.email } });
+    res.json({ token, user: { _id: user._id, username: user.username, email: user.email } });
 
   } catch (error) {
     console.error(error);

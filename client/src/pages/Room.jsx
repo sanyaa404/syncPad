@@ -210,14 +210,14 @@ const Room = () => {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gray-900 flex items-center justify-center">
+      <div style={{ background: '#1c1c1c', minHeight: '100vh' }} className="flex items-center justify-center">
         <div className="text-center">
-          <p className="text-red-400 mb-4">{error}</p>
+          <p style={{ color: '#BE5103', marginBottom: '12px', fontSize: '14px' }}>{error}</p>
           <button
             onClick={() => navigate('/dashboard')}
-            className="text-blue-400 hover:text-blue-300 text-sm"
+            style={{ color: '#888', fontSize: '13px', background: 'none', border: 'none', cursor: 'pointer' }}
           >
-            Back to Dashboard
+            ← Back to Dashboard
           </button>
         </div>
       </div>
@@ -225,75 +225,82 @@ const Room = () => {
   }
 
   return (
-    <div className="h-screen bg-gray-900 flex flex-col overflow-hidden">
+    <div style={{ height: '100vh', background: '#1c1c1c', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
       <Navbar />
 
       {/* Room Header */}
-      <div className="bg-gray-800 border-b border-gray-700 px-6 py-3 flex-shrink-0">
-        <div className="flex items-center justify-between">
+      <div style={{ background: '#242424', borderBottom: '1px solid #333', padding: '8px 16px', flexShrink: 0 }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
 
           {/* Left */}
-          <div className="flex items-center gap-4">
-            <h1 className="text-white font-medium text-sm">
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <span style={{ color: '#e5e5e5', fontSize: '13px', fontWeight: '500' }}>
               {room?.name || 'Loading...'}
-            </h1>
-            <span className="text-gray-500 text-xs font-mono bg-gray-700 px-2 py-1 rounded">
+            </span>
+            <span style={{ color: '#555', fontSize: '11px', fontFamily: 'monospace', background: '#2a2a2a', border: '1px solid #333', padding: '2px 8px', borderRadius: '4px' }}>
               {roomId}
             </span>
             <select
               value={language}
               onChange={handleLanguageChange}
-              className="bg-gray-700 text-gray-300 text-xs rounded px-2 py-1 outline-none"
+              style={{ background: '#2a2a2a', border: '1px solid #333', color: '#888', fontSize: '11px', borderRadius: '4px', padding: '3px 6px', outline: 'none' }}
             >
               {LANGUAGES.map(lang => (
                 <option key={lang} value={lang}>{lang}</option>
               ))}
             </select>
-
             <button
               onClick={handleRunCode}
               disabled={running}
-              className="flex items-center gap-1.5 bg-green-600 hover:bg-green-500 disabled:opacity-50 disabled:cursor-not-allowed text-white text-xs font-medium px-3 py-1.5 rounded transition"
+              style={{
+                background: running ? '#7a3402' : '#BE5103',
+                color: '#fff',
+                border: 'none',
+                borderRadius: '6px',
+                padding: '4px 12px',
+                fontSize: '11px',
+                fontWeight: '600',
+                cursor: running ? 'not-allowed' : 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '4px'
+              }}
             >
-              {running ? (
-                <>
-                  <span className="animate-spin">⟳</span>
-                  Running...
-                </>
-              ) : (
-                <>▶ Run</>
-              )}
+              {running ? '⟳ Running...' : '▶ Run'}
             </button>
           </div>
 
           {/* Right */}
-          <div className="flex items-center gap-4">
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
             {getTypingText() && (
-              <span className="text-gray-400 text-xs italic">
+              <span style={{ color: '#555', fontSize: '11px', fontStyle: 'italic' }}>
                 {getTypingText()}
               </span>
             )}
-            <span className={`text-xs ${saved ? 'text-green-400' : 'text-yellow-400'}`}>
+            <span style={{ fontSize: '11px', color: saved ? '#22c55e' : '#BE5103' }}>
               {saved ? '✓ Saved' : 'Saving...'}
             </span>
-
-            {/* User avatars — click to toggle panel */}
             <div
-              className="flex items-center gap-1 cursor-pointer"
+              style={{ display: 'flex', alignItems: 'center', gap: '3px', cursor: 'pointer' }}
               onClick={() => setShowUserPanel(!showUserPanel)}
             >
               {connectedUsers.slice(0, 4).map((u) => (
                 <div
                   key={u.socketId}
                   title={u.username}
-                  className="w-7 h-7 rounded-full flex items-center justify-center text-white text-xs font-bold border-2 border-gray-900"
-                  style={{ backgroundColor: getUserColor(u.username) }}
+                  style={{
+                    width: '26px', height: '26px', borderRadius: '50%',
+                    background: getUserColor(u.username),
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    color: '#fff', fontSize: '10px', fontWeight: '700',
+                    border: '2px solid #1c1c1c'
+                  }}
                 >
                   {u.username[0].toUpperCase()}
                 </div>
               ))}
               {connectedUsers.length > 4 && (
-                <div className="w-7 h-7 rounded-full bg-gray-600 flex items-center justify-center text-white text-xs">
+                <div style={{ width: '26px', height: '26px', borderRadius: '50%', background: '#2a2a2a', border: '1px solid #333', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#888', fontSize: '10px' }}>
                   +{connectedUsers.length - 4}
                 </div>
               )}
@@ -303,19 +310,19 @@ const Room = () => {
       </div>
 
       {/* Main area */}
-      <div className="flex-1 flex overflow-hidden">
+      <div style={{ flex: 1, display: 'flex', overflow: 'hidden' }}>
 
-        {/* Editor + Output stacked */}
-        <div className="flex-1 flex flex-col overflow-hidden">
+        {/* Editor + Output */}
+        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
 
-            {/* Editor */}
-            <div className={`${showOutput ? 'h-3/5' : 'flex-1'} overflow-hidden`}>
+          {/* Editor */}
+          <div style={{ flex: showOutput ? '0 0 60%' : '1', overflow: 'hidden' }}>
             {loading ? (
-                <div className="flex items-center justify-center h-full">
-                <div className="text-gray-400 text-sm">Loading editor...</div>
-                </div>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%' }}>
+                <span style={{ color: '#555', fontSize: '13px' }}>Loading editor...</span>
+              </div>
             ) : (
-                <Editor
+              <Editor
                 height="100%"
                 language={language === 'cpp' ? 'cpp' : language}
                 value={code}
@@ -323,120 +330,116 @@ const Room = () => {
                 onMount={handleEditorMount}
                 theme="vs-dark"
                 options={{
-                    fontSize: 14,
-                    minimap: { enabled: false },
-                    scrollBeyondLastLine: false,
-                    wordWrap: 'on',
-                    padding: { top: 16 },
-                    fontFamily: 'JetBrains Mono, Fira Code, monospace',
+                  fontSize: 14,
+                  minimap: { enabled: false },
+                  scrollBeyondLastLine: false,
+                  wordWrap: 'on',
+                  padding: { top: 16 },
+                  fontFamily: 'JetBrains Mono, Fira Code, monospace',
                 }}
-                />
+              />
             )}
-            </div>
+          </div>
 
-            {/* Output Panel */}
-            {showOutput && (
-            <div className="h-2/5 bg-gray-950 border-t border-gray-700 flex flex-col">
-                <div className="flex items-center justify-between px-4 py-2 border-b border-gray-700 flex-shrink-0">
-                <div className="flex items-center gap-3">
-                    <span className="text-white text-xs font-medium">Output</span>
-                    {output?.status && (
-                    <span className={`text-xs px-2 py-0.5 rounded font-medium ${
-                        output.status === 'Accepted'
-                        ? 'bg-green-500/20 text-green-400'
-                        : 'bg-red-500/20 text-red-400'
-                    }`}>
-                        {output.status}
+          {/* Output Panel */}
+          {showOutput && (
+            <div style={{ flex: '0 0 40%', background: '#141414', borderTop: '1px solid #333', display: 'flex', flexDirection: 'column' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '8px 16px', borderBottom: '1px solid #333', flexShrink: 0 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                  <span style={{ color: '#e5e5e5', fontSize: '12px', fontWeight: '500' }}>Output</span>
+                  {output?.status && (
+                    <span style={{
+                      fontSize: '10px', padding: '2px 8px', borderRadius: '4px', fontWeight: '600',
+                      background: output.status === 'Accepted' ? '#15803d20' : '#BE510320',
+                      color: output.status === 'Accepted' ? '#22c55e' : '#BE5103',
+                      border: `1px solid ${output.status === 'Accepted' ? '#15803d40' : '#BE510340'}`
+                    }}>
+                      {output.status}
                     </span>
-                    )}
-                    {output?.time && (
-                    <span className="text-gray-500 text-xs">{output.time}s</span>
-                    )}
+                  )}
+                  {output?.time && (
+                    <span style={{ color: '#555', fontSize: '11px' }}>{output.time}s</span>
+                  )}
                 </div>
                 <button
-                    onClick={() => setShowOutput(false)}
-                    className="text-gray-500 hover:text-white text-xs"
+                  onClick={() => setShowOutput(false)}
+                  style={{ background: 'none', border: 'none', color: '#555', cursor: 'pointer', fontSize: '14px' }}
+                  onMouseEnter={e => e.target.style.color = '#e5e5e5'}
+                  onMouseLeave={e => e.target.style.color = '#555'}
                 >
-                    ✕
+                  ✕
                 </button>
-                </div>
-
-                <div className="flex-1 overflow-y-auto p-4 font-mono text-sm">
+              </div>
+              <div style={{ flex: 1, overflowY: 'auto', padding: '16px', fontFamily: 'JetBrains Mono, Fira Code, monospace' }}>
                 {running ? (
-                    <div className="text-gray-400 text-xs">Running code...</div>
+                  <span style={{ color: '#555', fontSize: '12px' }}>Running...</span>
                 ) : output ? (
-                    <>
+                  <>
                     {output.compile_output && (
-                        <div className="mb-3">
-                        <div className="text-yellow-400 text-xs mb-1">Compilation Error</div>
-                        <pre className="text-yellow-300 text-xs whitespace-pre-wrap">
-                            {output.compile_output}
-                        </pre>
-                        </div>
+                      <div style={{ marginBottom: '12px' }}>
+                        <div style={{ color: '#BE5103', fontSize: '11px', marginBottom: '6px', fontWeight: '600' }}>COMPILATION ERROR</div>
+                        <pre style={{ color: '#BE5103', fontSize: '12px', whiteSpace: 'pre-wrap', margin: 0 }}>{output.compile_output}</pre>
+                      </div>
                     )}
                     {output.stderr && (
-                        <div className="mb-3">
-                        <div className="text-red-400 text-xs mb-1">Error</div>
-                        <pre className="text-red-300 text-xs whitespace-pre-wrap">
-                            {output.stderr}
-                        </pre>
-                        </div>
+                      <div style={{ marginBottom: '12px' }}>
+                        <div style={{ color: '#ef4444', fontSize: '11px', marginBottom: '6px', fontWeight: '600' }}>STDERR</div>
+                        <pre style={{ color: '#ef4444', fontSize: '12px', whiteSpace: 'pre-wrap', margin: 0 }}>{output.stderr}</pre>
+                      </div>
                     )}
                     {output.stdout && (
-                        <div>
-                        <div className="text-green-400 text-xs mb-1">Output</div>
-                        <pre className="text-gray-200 text-xs whitespace-pre-wrap">
-                            {output.stdout}
-                        </pre>
-                        </div>
+                      <div>
+                        <div style={{ color: '#22c55e', fontSize: '11px', marginBottom: '6px', fontWeight: '600' }}>OUTPUT</div>
+                        <pre style={{ color: '#e5e5e5', fontSize: '12px', whiteSpace: 'pre-wrap', margin: 0 }}>{output.stdout}</pre>
+                      </div>
                     )}
                     {!output.stdout && !output.stderr && !output.compile_output && (
-                        <div className="text-gray-500 text-xs">
-                        No output
-                        </div>
+                      <span style={{ color: '#555', fontSize: '12px' }}>No output</span>
                     )}
-                    </>
+                  </>
                 ) : null}
-                </div>
+              </div>
             </div>
-            )}
+          )}
         </div>
 
         {/* User Panel */}
         {showUserPanel && (
-            <div className="w-56 bg-gray-800 border-l border-gray-700 flex flex-col flex-shrink-0">
-            <div className="px-4 py-3 border-b border-gray-700 flex items-center justify-between">
-                <span className="text-white text-xs font-medium">
-                In this room ({connectedUsers.length})
-                </span>
-                <button
+          <div style={{ width: '200px', background: '#242424', borderLeft: '1px solid #333', display: 'flex', flexDirection: 'column', flexShrink: 0 }}>
+            <div style={{ padding: '12px 14px', borderBottom: '1px solid #333', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <span style={{ color: '#888', fontSize: '11px', fontWeight: '500', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                Online ({connectedUsers.length})
+              </span>
+              <button
                 onClick={() => setShowUserPanel(false)}
-                className="text-gray-500 hover:text-white text-xs"
-                >
+                style={{ background: 'none', border: 'none', color: '#555', cursor: 'pointer', fontSize: '14px' }}
+              >
                 ✕
-                </button>
+              </button>
             </div>
-            <div className="flex-1 overflow-y-auto p-3 space-y-2">
-                {connectedUsers.map((u) => (
-                <div key={u.socketId} className="flex items-center gap-2">
-                    <div
-                    className="w-7 h-7 rounded-full flex items-center justify-center text-white text-xs font-bold flex-shrink-0"
-                    style={{ backgroundColor: getUserColor(u.username) }}
-                    >
+            <div style={{ flex: 1, overflowY: 'auto', padding: '10px' }}>
+              {connectedUsers.map((u) => (
+                <div key={u.socketId} style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '6px 4px' }}>
+                  <div style={{
+                    width: '26px', height: '26px', borderRadius: '50%',
+                    background: getUserColor(u.username),
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    color: '#fff', fontSize: '10px', fontWeight: '700', flexShrink: 0
+                  }}>
                     {u.username[0].toUpperCase()}
-                    </div>
-                    <span className="text-gray-300 text-sm truncate">
+                  </div>
+                  <span style={{ color: '#aaa', fontSize: '13px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                     {u.username}
-                    </span>
-                    {u.userId === user?._id && (
-                    <span className="text-gray-500 text-xs ml-auto">you</span>
-                    )}
+                  </span>
+                  {u.userId === user?._id && (
+                    <span style={{ color: '#555', fontSize: '10px', marginLeft: 'auto' }}>you</span>
+                  )}
                 </div>
-                ))}
+              ))}
             </div>
-            </div>
+          </div>
         )}
-        </div>
+      </div>
     </div>
   );
 };

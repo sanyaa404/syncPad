@@ -26,52 +26,103 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-900 flex items-center justify-center px-4">
-      <div className="bg-gray-800 rounded-xl p-8 w-full max-w-md">
-        <h1 className="text-white text-2xl font-bold mb-2">Welcome back</h1>
-        <p className="text-gray-400 text-sm mb-6">Sign in to your Syncpad account</p>
+    <div style={{ background: '#1c1c1c', minHeight: '100vh' }} className="flex items-center justify-center px-4">
+      <div style={{ background: '#242424', border: '1px solid #333', borderRadius: '12px', width: '100%', maxWidth: '400px', padding: '36px' }}>
+
+        {/* Logo */}
+        <div className="mb-8">
+          <span style={{ color: '#BE5103', fontSize: '22px', fontWeight: '700', letterSpacing: '-0.5px' }}>
+            Syncpad
+          </span>
+          <p style={{ color: '#888', fontSize: '13px', marginTop: '6px' }}>
+            Sign in to your account
+          </p>
+        </div>
 
         {error && (
-          <div className="bg-red-500/10 border border-red-500/50 text-red-400 text-sm px-4 py-3 rounded-lg mb-4">
+          <div style={{ background: '#BE510315', border: '1px solid #BE510340', color: '#BE5103', fontSize: '13px', padding: '10px 14px', borderRadius: '8px', marginBottom: '16px' }}>
             {error}
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label className="text-gray-400 text-sm block mb-1">Email</label>
+        <form onSubmit={handleSubmit}>
+          <div className="mb-4">
+            <label style={{ color: '#888', fontSize: '12px', display: 'block', marginBottom: '6px' }}>
+              Email
+            </label>
             <input
               type="email"
               value={form.email}
               onChange={(e) => setForm({ ...form, email: e.target.value })}
-              className="w-full bg-gray-700 text-white rounded-lg px-4 py-2.5 text-sm outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="you@example.com"
               required
+              style={{
+                width: '100%',
+                background: '#1c1c1c',
+                border: '1px solid #333',
+                borderRadius: '8px',
+                padding: '10px 14px',
+                color: '#e5e5e5',
+                fontSize: '14px',
+                outline: 'none',
+                boxSizing: 'border-box'
+              }}
+              onFocus={e => e.target.style.borderColor = '#BE5103'}
+              onBlur={e => e.target.style.borderColor = '#333'}
             />
           </div>
-          <div>
-            <label className="text-gray-400 text-sm block mb-1">Password</label>
+
+          <div className="mb-6">
+            <label style={{ color: '#888', fontSize: '12px', display: 'block', marginBottom: '6px' }}>
+              Password
+            </label>
             <input
               type="password"
               value={form.password}
               onChange={(e) => setForm({ ...form, password: e.target.value })}
-              className="w-full bg-gray-700 text-white rounded-lg px-4 py-2.5 text-sm outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="••••••••"
               required
+              style={{
+                width: '100%',
+                background: '#1c1c1c',
+                border: '1px solid #333',
+                borderRadius: '8px',
+                padding: '10px 14px',
+                color: '#e5e5e5',
+                fontSize: '14px',
+                outline: 'none',
+                boxSizing: 'border-box'
+              }}
+              onFocus={e => e.target.style.borderColor = '#BE5103'}
+              onBlur={e => e.target.style.borderColor = '#333'}
             />
           </div>
+
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-blue-600 hover:bg-blue-500 disabled:opacity-50 text-white font-medium py-2.5 rounded-lg transition text-sm"
+            style={{
+              width: '100%',
+              background: loading ? '#7a3402' : '#BE5103',
+              color: '#fff',
+              border: 'none',
+              borderRadius: '8px',
+              padding: '11px',
+              fontSize: '14px',
+              fontWeight: '600',
+              cursor: loading ? 'not-allowed' : 'pointer',
+              transition: 'background 0.15s'
+            }}
+            onMouseEnter={e => { if (!loading) e.target.style.background = '#A34502' }}
+            onMouseLeave={e => { if (!loading) e.target.style.background = '#BE5103' }}
           >
             {loading ? 'Signing in...' : 'Sign in'}
           </button>
         </form>
 
-        <p className="text-gray-500 text-sm text-center mt-6">
+        <p style={{ color: '#555', fontSize: '13px', textAlign: 'center', marginTop: '24px' }}>
           Don't have an account?{' '}
-          <Link to="/register" className="text-blue-400 hover:text-blue-300">
+          <Link to="/register" style={{ color: '#BE5103', textDecoration: 'none' }}>
             Sign up
           </Link>
         </p>

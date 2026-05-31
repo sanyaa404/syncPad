@@ -14,9 +14,7 @@ const Dashboard = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
 
-  useEffect(() => {
-    fetchRooms();
-  }, []);
+  useEffect(() => { fetchRooms(); }, []);
 
   const fetchRooms = async () => {
     try {
@@ -52,82 +50,134 @@ const Dashboard = () => {
 
   const languages = ['javascript', 'python', 'cpp', 'java', 'typescript'];
 
+  const inputStyle = {
+    background: '#1c1c1c',
+    border: '1px solid #333',
+    borderRadius: '8px',
+    padding: '10px 14px',
+    color: '#e5e5e5',
+    fontSize: '13px',
+    outline: 'none',
+  };
+
   return (
-    <div className="min-h-screen bg-gray-900">
+    <div style={{ background: '#1c1c1c', minHeight: '100vh' }}>
       <Navbar />
-      <div className="max-w-6xl mx-auto px-6 py-10">
+
+      <div style={{ maxWidth: '900px', margin: '0 auto', padding: '40px 24px' }}>
 
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h1 className="text-white text-2xl font-bold">
-              Welcome, {user?.username}
+            <h1 style={{ color: '#e5e5e5', fontSize: '20px', fontWeight: '600', margin: 0 }}>
+              Good to see you, {user?.username}
             </h1>
-            <p className="text-gray-400 text-sm mt-1">
-              Your collaborative coding sessions
+            <p style={{ color: '#555', fontSize: '13px', marginTop: '4px' }}>
+              Your collaborative sessions
             </p>
           </div>
           <button
             onClick={() => setCreateModal(true)}
-            className="bg-blue-600 hover:bg-blue-500 text-white text-sm font-medium px-4 py-2 rounded-lg transition"
+            style={{
+              background: '#BE5103',
+              color: '#fff',
+              border: 'none',
+              borderRadius: '8px',
+              padding: '9px 16px',
+              fontSize: '13px',
+              fontWeight: '600',
+              cursor: 'pointer'
+            }}
+            onMouseEnter={e => e.target.style.background = '#A34502'}
+            onMouseLeave={e => e.target.style.background = '#BE5103'}
           >
             + New Room
           </button>
         </div>
 
         {error && (
-          <div className="bg-red-500/10 border border-red-500/50 text-red-400 text-sm px-4 py-3 rounded-lg mb-6">
+          <div style={{ background: '#BE510315', border: '1px solid #BE510340', color: '#BE5103', fontSize: '13px', padding: '10px 14px', borderRadius: '8px', marginBottom: '20px' }}>
             {error}
           </div>
         )}
 
         {/* Join Room */}
-        <div className="bg-gray-800 rounded-xl p-6 mb-8">
-          <h2 className="text-white font-medium mb-3">Join a Room</h2>
-          <form onSubmit={handleJoin} className="flex gap-3">
+        <div style={{ background: '#242424', border: '1px solid #333', borderRadius: '10px', padding: '20px', marginBottom: '32px' }}>
+          <p style={{ color: '#888', fontSize: '12px', marginBottom: '10px', fontWeight: '500', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+            Join a room
+          </p>
+          <form onSubmit={handleJoin} style={{ display: 'flex', gap: '10px' }}>
             <input
               type="text"
               value={joinInput}
               onChange={(e) => setJoinInput(e.target.value)}
-              placeholder="Enter room code (e.g. xK9mP2)"
-              className="flex-1 bg-gray-700 text-white rounded-lg px-4 py-2.5 text-sm outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="Enter room code  —  e.g. xK9mP2"
+              style={{ ...inputStyle, flex: 1 }}
+              onFocus={e => e.target.style.borderColor = '#BE5103'}
+              onBlur={e => e.target.style.borderColor = '#333'}
             />
             <button
               type="submit"
-              className="bg-gray-600 hover:bg-gray-500 text-white text-sm font-medium px-4 py-2.5 rounded-lg transition"
+              style={{
+                background: '#2a2a2a',
+                border: '1px solid #333',
+                color: '#e5e5e5',
+                borderRadius: '8px',
+                padding: '10px 18px',
+                fontSize: '13px',
+                fontWeight: '600',
+                cursor: 'pointer'
+              }}
+              onMouseEnter={e => e.target.style.borderColor = '#BE5103'}
+              onMouseLeave={e => e.target.style.borderColor = '#333'}
             >
               Join
             </button>
           </form>
         </div>
 
-        {/* Rooms List */}
-        <h2 className="text-white font-medium mb-4">Your Rooms</h2>
+        {/* Rooms */}
+        <p style={{ color: '#888', fontSize: '12px', fontWeight: '500', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '14px' }}>
+          Your rooms
+        </p>
+
         {loading ? (
-          <div className="text-gray-400 text-sm">Loading rooms...</div>
+          <p style={{ color: '#555', fontSize: '13px' }}>Loading...</p>
         ) : rooms.length === 0 ? (
-          <div className="text-gray-500 text-sm">
-            No rooms yet. Create one to get started.
+          <div style={{ background: '#242424', border: '1px solid #333', borderRadius: '10px', padding: '40px', textAlign: 'center' }}>
+            <p style={{ color: '#555', fontSize: '14px' }}>No rooms yet.</p>
+            <p style={{ color: '#444', fontSize: '13px', marginTop: '4px' }}>Create one to get started.</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: '12px' }}>
             {rooms.map((room) => (
               <div
                 key={room._id}
                 onClick={() => navigate(`/room/${room.roomId}`)}
-                className="bg-gray-800 hover:bg-gray-750 border border-gray-700 hover:border-gray-500 rounded-xl p-5 cursor-pointer transition"
+                style={{
+                  background: '#242424',
+                  border: '1px solid #333',
+                  borderRadius: '10px',
+                  padding: '18px',
+                  cursor: 'pointer',
+                  transition: 'border-color 0.15s'
+                }}
+                onMouseEnter={e => e.currentTarget.style.borderColor = '#BE5103'}
+                onMouseLeave={e => e.currentTarget.style.borderColor = '#333'}
               >
-                <div className="flex items-start justify-between mb-3">
-                  <h3 className="text-white font-medium">{room.name}</h3>
-                  <span className="text-xs bg-gray-700 text-gray-300 px-2 py-1 rounded">
+                <div className="flex items-center justify-between mb-3">
+                  <span style={{ color: '#e5e5e5', fontSize: '14px', fontWeight: '500' }}>
+                    {room.name}
+                  </span>
+                  <span style={{ background: '#2a2a2a', color: '#888', fontSize: '11px', padding: '2px 8px', borderRadius: '4px', border: '1px solid #333' }}>
                     {room.language}
                   </span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-gray-500 text-xs font-mono">
+                  <span style={{ color: '#555', fontSize: '11px', fontFamily: 'monospace' }}>
                     {room.roomId}
                   </span>
-                  <span className="text-gray-500 text-xs">
+                  <span style={{ color: '#555', fontSize: '11px' }}>
                     {room.members.length} member{room.members.length !== 1 ? 's' : ''}
                   </span>
                 </div>
@@ -137,46 +187,52 @@ const Dashboard = () => {
         )}
       </div>
 
-      {/* Create Room Modal */}
+      {/* Create Modal */}
       {createModal && (
-        <div className="fixed inset-0 bg-black/60 flex items-center justify-center px-4 z-50">
-          <div className="bg-gray-800 rounded-xl p-6 w-full max-w-md">
-            <h2 className="text-white font-bold text-lg mb-4">Create New Room</h2>
-            <form onSubmit={handleCreate} className="space-y-4">
-              <div>
-                <label className="text-gray-400 text-sm block mb-1">Room Name</label>
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.7)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px', zIndex: 50 }}>
+          <div style={{ background: '#242424', border: '1px solid #333', borderRadius: '12px', padding: '28px', width: '100%', maxWidth: '380px' }}>
+            <h2 style={{ color: '#e5e5e5', fontSize: '16px', fontWeight: '600', marginBottom: '20px' }}>
+              Create new room
+            </h2>
+            <form onSubmit={handleCreate}>
+              <div className="mb-4">
+                <label style={{ color: '#888', fontSize: '12px', display: 'block', marginBottom: '6px' }}>Room name</label>
                 <input
                   type="text"
                   value={newRoom.name}
                   onChange={(e) => setNewRoom({ ...newRoom, name: e.target.value })}
-                  className="w-full bg-gray-700 text-white rounded-lg px-4 py-2.5 text-sm outline-none focus:ring-2 focus:ring-blue-500"
                   placeholder="Interview Prep, Bug Fix #234..."
                   required
+                  style={{ ...inputStyle, width: '100%', boxSizing: 'border-box' }}
+                  onFocus={e => e.target.style.borderColor = '#BE5103'}
+                  onBlur={e => e.target.style.borderColor = '#333'}
                 />
               </div>
-              <div>
-                <label className="text-gray-400 text-sm block mb-1">Language</label>
+              <div className="mb-6">
+                <label style={{ color: '#888', fontSize: '12px', display: 'block', marginBottom: '6px' }}>Language</label>
                 <select
                   value={newRoom.language}
                   onChange={(e) => setNewRoom({ ...newRoom, language: e.target.value })}
-                  className="w-full bg-gray-700 text-white rounded-lg px-4 py-2.5 text-sm outline-none focus:ring-2 focus:ring-blue-500"
+                  style={{ ...inputStyle, width: '100%', boxSizing: 'border-box' }}
                 >
                   {languages.map(lang => (
                     <option key={lang} value={lang}>{lang}</option>
                   ))}
                 </select>
               </div>
-              <div className="flex gap-3 pt-2">
+              <div style={{ display: 'flex', gap: '10px' }}>
                 <button
                   type="button"
                   onClick={() => setCreateModal(false)}
-                  className="flex-1 bg-gray-700 hover:bg-gray-600 text-white text-sm font-medium py-2.5 rounded-lg transition"
+                  style={{ flex: 1, background: '#2a2a2a', border: '1px solid #333', color: '#888', borderRadius: '8px', padding: '10px', fontSize: '13px', cursor: 'pointer' }}
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="flex-1 bg-blue-600 hover:bg-blue-500 text-white text-sm font-medium py-2.5 rounded-lg transition"
+                  style={{ flex: 1, background: '#BE5103', border: 'none', color: '#fff', borderRadius: '8px', padding: '10px', fontSize: '13px', fontWeight: '600', cursor: 'pointer' }}
+                  onMouseEnter={e => e.target.style.background = '#A34502'}
+                  onMouseLeave={e => e.target.style.background = '#BE5103'}
                 >
                   Create
                 </button>
