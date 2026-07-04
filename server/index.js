@@ -13,12 +13,14 @@ const httpServer = createServer(app);
 
 const io = new Server(httpServer, {
   cors: {
-    origin: 'http://localhost:3000',
+    origin: process.env.FRONTEND_URL || 'http://localhost:3000',
     methods: ['GET', 'POST']
   }
 });
 
-app.use(cors()); //allows your React frontend on port 3000 to call this API on port 5000
+app.use(cors({
+  origin: process.env.FRONTEND_URL || 'http://localhost:3000'
+})); //allows your React frontend on port 3000 to call this API on port 5000
 app.use(express.json());
 
 //health check
